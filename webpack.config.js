@@ -19,11 +19,10 @@ module.exports = {
     path: path.join(process.cwd(), 'dist')
   },
   resolve: {
-    extensions: ['.js', '.json', '.ts']
+    extensions: ['.js', '.json', '.ts', '.jade']
   },
   externals: {},
   target: 'node',
-  // stats: 'errors-only',
   module: {
     rules: [
       {
@@ -37,9 +36,17 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new CopyWebpackPlugin([
       {
-        context: '',
+        context: 'src',
         from: {
-          glob: path.join(process.cwd(), 'public/**/*'),
+          glob: path.join(process.cwd(), 'src/public/**/*'),
+          dot: true
+        },
+        to: ''
+      },
+      {
+        context: 'src',
+        from: {
+          glob: path.join(process.cwd(), 'src/views/**/*'),
           dot: true
         },
         to: ''
@@ -48,7 +55,8 @@ module.exports = {
       ignore: [],
       debug: 'warning'
     }),
-    // new UglifyJSPlugin(),
+    new UglifyJSPlugin(),
     new ProgressPlugin()
-  ]
+  ],
+  node: false
 };
