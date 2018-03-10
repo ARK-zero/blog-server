@@ -11,23 +11,22 @@ router.get('/login', (req, res, next) => {
   res.render('login.jade');
 });
 
-router.get('/logout', (req, res, next) => {
-  req.logout();
-  res.send({logout: true})
+router.post('/login', passport.authenticate('local'), (req, res) => {
+  res.send({login: true});
 });
 
 router.get('/isLogin', (req, res, next) => {
   res.send({isLogin: req.isAuthenticated()})
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
-  res.send({login: true});
+router.get('/logout', (req, res, next) => {
+  req.logout();
+  res.send({logout: true})
 });
 
 router.get('/register', (req, res, next) => {
   res.render('register.jade')
 });
-
 
 router.post('/register', (req, res, next) => {
   if (req.body.username && req.body.password) {
@@ -46,6 +45,16 @@ router.post('/register', (req, res, next) => {
   } else {
     res.send({register: false})
   }
+});
+
+router.post('/hasUser', (req, res, next) => {
+  User.findOne({username: req.body.username}, (err, user) => {
+    if (user) {
+      res.send({hasUser: true})
+    } else {
+      res.send({hasUser: false})
+    }
+  })
 });
 
 export = router;
