@@ -12,8 +12,18 @@ router.get('/login', (req, res, next) => {
   res.render('login.jade');
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
-  res.send({login: true});
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err || !user) {
+      return res.send({login: false});
+    }
+    req.login(user, (err) => {
+      if (err) {
+        return res.send({login: false});
+      }
+      return res.send({login: true});
+    });
+  })(req, res, next);
 });
 
 router.get('/isLogin', (req, res, next) => {

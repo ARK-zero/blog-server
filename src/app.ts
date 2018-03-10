@@ -33,20 +33,21 @@ app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'username',
   passwordField: 'password'
-}, (username, password, done) => {
+}, (username, password, verified) => {
+  console.log(verified)
   User['findByName'](username, (err, user) => {
+    if (err) {return verified(err, false)}
     const hash = crypto.createHash(encryptionConfig.hash);
     const verification = hash.update(encryptionConfig.salt + password).digest('hex');
     if (user) {
       if (verification === user.password) {
-        return done(null, user);
+        return verified(null, user);
       } else {
-        return done(null, false)
+        return verified(null, false)
       }
     } else {
-      return done(null, false)
+      return verified(null, false)
     }
-
   })
 }));
 passport.serializeUser(User['serializeUser']());
