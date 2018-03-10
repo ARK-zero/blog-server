@@ -5,6 +5,7 @@ import express = require('express');
 import passport = require('passport');
 import crypto = require('crypto');
 import User = require('../models/user');
+import encryptionConfig = require('../config/password.config');
 const router = express.Router();
 
 router.get('/login', (req, res, next) => {
@@ -32,9 +33,8 @@ router.post('/register', (req, res, next) => {
   if (req.body.username && req.body.password) {
     User.findOne({username: req.body.username}, (err, user) => {
       if (!user) {
-        const salt = 'cyclelove';
-        const ssl3_md5 = crypto.createHash('ssl3-md5');
-        const encryption = ssl3_md5.update(salt + req.body.password).digest('hex');
+        const hash = crypto.createHash(encryptionConfig.hash);
+        const encryption = hash.update(encryptionConfig.salt + req.body.password).digest('hex');
         const registerUser = new User({username: req.body.username, password: encryption});
         registerUser.save();
         res.send({register: true})

@@ -8,8 +8,9 @@ import passport = require('passport');
 import LocalStrategy = require('passport-local');
 import session = require('express-session');
 
-import User = require('./models/user');
 import sessionConfig = require('./config/session.config');
+import encryptionConfig = require('./config/password.config');
+import User = require('./models/user');
 import user = require('./routes/user');
 
 const app = express();
@@ -34,9 +35,8 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
 }, (username, password, done) => {
   User['findByName'](username, (err, user) => {
-    const salt = 'cyclelove';
-    const ssl3_md5 = crypto.createHash('ssl3-md5');
-    const verification = ssl3_md5.update(salt + password).digest('hex');
+    const hash = crypto.createHash(encryptionConfig.hash);
+    const verification = hash.update(encryptionConfig.salt + password).digest('hex');
     if (user) {
       if (verification === user.password) {
         return done(null, user);
