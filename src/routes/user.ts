@@ -5,12 +5,8 @@ import express = require('express');
 import passport = require('passport');
 import crypto = require('crypto');
 import User = require('../models/user');
-import encryptionConfig = require('../config/password.config');
+import passwordConfig = require('../config/password.config');
 const router = express.Router();
-
-router.get('/login', (req, res, next) => {
-  res.render('login.jade');
-});
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -26,25 +22,18 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/isLogin', (req, res, next) => {
-  res.send({isLogin: req.isAuthenticated()})
-});
-
-router.get('/logout', (req, res, next) => {
+router.post('/logout', (req, res, next) => {
   req.logout();
   res.send({logout: true})
 });
 
-router.get('/register', (req, res, next) => {
-  res.render('register.jade')
-});
-
 router.post('/register', (req, res, next) => {
-  if (req.body.username && req.body.password) {
+  console.log(req.body.inviteCode);
+  if (req.body.username && req.body.password && (req.body.inviteCode === passwordConfig.inviteCode)) {
     User.findOne({username: req.body.username}, (err, user) => {
       if (!user) {
-        const hash = crypto.createHash(encryptionConfig.hash);
-        const encryption = hash.update(encryptionConfig.salt + req.body.password).digest('hex');
+        const hash = crypto.createHash(passwordConfig.hash);
+        const encryption = hash.update(passwordConfig.salt + req.body.password).digest('hex');
         const registerUser = new User({username: req.body.username, password: encryption});
         registerUser.save();
         res.send({register: true})
@@ -60,7 +49,7 @@ router.post('/register', (req, res, next) => {
 router.post('/hasUser', (req, res, next) => {
   User.findOne({username: req.body.username}, (err, user) => {
     if (user) {
-      res.send({hasUser: true})
+      res.send({hasUser: req.body.username})
     } else {
       res.send({hasUser: false})
     }

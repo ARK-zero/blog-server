@@ -16,15 +16,15 @@ import user = require('./routes/user');
 const app = express();
 
 // views engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.resolve(__dirname, 'views'));
 app.set('views engine', 'jade');
 
-// uncomment after placing your favicon in /public
+// uncomment after placing your favicon in /static
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, 'static')));
 app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -34,7 +34,6 @@ passport.use(new LocalStrategy({
   usernameField: 'username',
   passwordField: 'password'
 }, (username, password, verified) => {
-  console.log(verified)
   User['findByName'](username, (err, user) => {
     if (err) {return verified(err, false)}
     const hash = crypto.createHash(encryptionConfig.hash);

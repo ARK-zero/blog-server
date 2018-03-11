@@ -38,7 +38,7 @@ module.exports = {
       {
         context: 'src',
         from: {
-          glob: path.join(process.cwd(), 'src/public/**/*'),
+          glob: path.join(process.cwd(), 'src/static/**/*'),
           dot: true
         },
         to: ''
