@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   password: String
 }, {
   versionKey: false,
-  collection: 'users'
+  collection: 'users',
+  timestamps: true
 });
 
 UserSchema.plugin(passportLocalMongoose);
@@ -21,4 +22,4 @@ UserSchema.static('findByName', function(username, callback) {
 
 const User = mongoose.model('user', UserSchema);
 
-export = User;
+export {User};

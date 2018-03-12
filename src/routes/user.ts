@@ -4,8 +4,10 @@
 import express = require('express');
 import passport = require('passport');
 import crypto = require('crypto');
-import User = require('../models/user');
-import passwordConfig = require('../config/password.config');
+
+import {User} from '../models';
+import {passwordConfig} from '../config';
+
 const router = express.Router();
 
 router.post('/login', (req, res, next) => {
@@ -35,8 +37,11 @@ router.post('/register', (req, res, next) => {
         const hash = crypto.createHash(passwordConfig.hash);
         const encryption = hash.update(passwordConfig.salt + req.body.password).digest('hex');
         const registerUser = new User({username: req.body.username, password: encryption});
-        registerUser.save();
-        res.send({register: true})
+        registerUser.save().then(() => {
+          res.send({register: true})
+        }).catch(() => {
+          res.send({register: false})
+        });
       } else {
         res.send({register: false})
       }
@@ -56,4 +61,14 @@ router.post('/hasUser', (req, res, next) => {
   })
 });
 
-export = router;
+router.post('/getUserList', (req, res, next) => {
+  User.aggregate([
+    {$sort: {'createdAt': -1}},
+    {$group: {_id: '$username'}}
+  ]).exec((err, result) => {
+    if (err) {throw err.message}
+    res.send(result);
+  })
+});
+
+export {router as user};

@@ -1,7 +1,7 @@
 /**
  * Created by aman on 3/10/2018.
  */
-export = {
+export const databaseConfig = {
   auth: false,
   username: '',
   password: '',

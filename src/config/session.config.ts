@@ -2,11 +2,11 @@
  * Created by aman on 3/10/2018.
  */
 import session = require('express-session');
-import connect_mongo = require('connect-mongo');
-import database = require('../models/database');
-const MongoStore = connect_mongo(session);
+import connectMongo = require('connect-mongo');
+import {database} from '../models';
+const MongoStore = connectMongo(session);
 
-export = {
+export const sessionConfig = {
   secret: 'Secret@!_Baby',
   name: 'cookie',
   store: new MongoStore({mongooseConnection: database}),

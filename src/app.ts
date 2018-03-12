@@ -8,10 +8,10 @@ import passport = require('passport');
 import LocalStrategy = require('passport-local');
 import session = require('express-session');
 
-import sessionConfig = require('./config/session.config');
-import encryptionConfig = require('./config/password.config');
-import User = require('./models/user');
-import user = require('./routes/user');
+import {sessionConfig, passwordConfig} from './config';
+
+import {User} from './models';
+import {user, article} from './routes';
 
 const app = express();
 
@@ -36,8 +36,8 @@ passport.use(new LocalStrategy({
 }, (username, password, verified) => {
   User['findByName'](username, (err, user) => {
     if (err) {return verified(err, false)}
-    const hash = crypto.createHash(encryptionConfig.hash);
-    const verification = hash.update(encryptionConfig.salt + password).digest('hex');
+    const hash = crypto.createHash(passwordConfig.hash);
+    const verification = hash.update(passwordConfig.salt + password).digest('hex');
     if (user) {
       if (verification === user.password) {
         return verified(null, user);
@@ -54,6 +54,7 @@ passport.deserializeUser(User['deserializeUser']());
 
 // routes config
 app.use('/user', user);
+app.use('/article', article);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

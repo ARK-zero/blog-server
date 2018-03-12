@@ -1,11 +1,11 @@
 import mongoose = require('mongoose');
-import dbConfig = require('../config/mongodb.config');
+import {databaseConfig} from '../config';
 
 let dbUrl: string;
-if (dbConfig.auth) {
-  dbUrl = `mongodb://${dbConfig.username}:${dbConfig.password}@${dbConfig.host || 'localhost'}:${dbConfig.port || '27017'}/${dbConfig.database || 'test'}`;
+if (databaseConfig.auth) {
+  dbUrl = `mongodb://${databaseConfig.username}:${databaseConfig.password}@${databaseConfig.host || 'localhost'}:${databaseConfig.port || '27017'}/${databaseConfig.database || 'test'}`;
 } else {
-  dbUrl = `mongodb://${dbConfig.host || 'localhost'}:${dbConfig.port || '27017'}/${dbConfig.database || 'test'}`;
+  dbUrl = `mongodb://${databaseConfig.host || 'localhost'}:${databaseConfig.port || '27017'}/${databaseConfig.database || 'test'}`;
 }
 
 const options = {
@@ -21,5 +21,5 @@ mongoose.connect(dbUrl, options).then(
 
 const database = mongoose.connection;
 
-export = database;
+export {database};
 

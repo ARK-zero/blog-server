@@ -21,6 +21,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json', '.ts', '.jade']
   },
+  stats: 'errors-only',
   externals: {},
   target: 'node',
   module: {
