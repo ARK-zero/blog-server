@@ -76,7 +76,6 @@ router.post('/getArticle', (req, res, next) => {
 });
 
 router.post('/insert', (req, res, next) => {
-
   for (let i = 0; i < 15; i++) {
     let article = new Article({
       title: Math.random().toString(),

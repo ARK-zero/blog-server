@@ -33,6 +33,7 @@ router.post('/register', (req, res, next) => {
   console.log(req.body.inviteCode);
   if (req.body.username && req.body.password && (req.body.inviteCode === passwordConfig.inviteCode)) {
     User.findOne({username: req.body.username}, (err, user) => {
+      if (err) throw err.message;
       if (!user) {
         const hash = crypto.createHash(passwordConfig.hash);
         const encryption = hash.update(passwordConfig.salt + req.body.password).digest('hex');
@@ -69,6 +70,17 @@ router.post('/getUserList', (req, res, next) => {
     if (err) {throw err.message}
     res.send(result);
   })
+});
+
+router.post('/checkStatus', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.send({
+      isLogin: true,
+      username: req.user.username
+    })
+  } else {
+    res.send({login: false})
+  }
 });
 
 export {router as user};
