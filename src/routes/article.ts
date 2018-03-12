@@ -5,34 +5,34 @@ import express = require('express');
 import {Article} from '../models';
 const router = express.Router();
 
-function updateArticle(article) {
+function updateArticle(article, res) {
   Article.update({_id: article._id}, article, (err, raw) => {
     if (err) {
-      res.send({update: false})
+      throw err.message;
     } else {
-      res.send({update: true})
+      res.send({_id: raw._id})
     }
   })
 }
 
-function saveArticle(article) {
+function saveArticle(article, res) {
   const article = new Article(article);
-  article.save().then(() => {
-    res.send({save: true});
-  }).catch(() => {
-    res.send({save: false});
+  article.save().then((doc) => {
+    res.send({_id: doc._id});
+  }).catch((err) => {
+    throw err.message;
   })
 }
 
 router.post('/save', (req, res, next) => {
   if (req.isAuthenticated()) {
     if (req.body._id) {
-      updateArticle(req.body);
+      updateArticle(req.body, res);
     } else {
-      saveArticle(req.body)
+      saveArticle(req.body, res)
     }
   } else {
-    res.send({save: false});
+    res.send();
   }
 });
 
@@ -72,6 +72,23 @@ router.post('/getArticle', (req, res, next) => {
     })
   } else {
     throw 'nothing';
+  }
+});
+
+router.post('/getClassification', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    Article.aggregate([
+      {$match: {author: req.body.author}},
+      {$group: {_id: '$classification'}}
+    ]).exec((err, result) => {
+      if (err) {
+        throw err.message
+      } else {
+        res.send(result)
+      }
+    })
+  } else {
+    res.send();
   }
 });
 
