@@ -43,14 +43,6 @@ module.exports = {
           dot: true
         },
         to: ''
-      },
-      {
-        context: 'src',
-        from: {
-          glob: path.join(process.cwd(), 'src/views/**/*'),
-          dot: true
-        },
-        to: ''
       }
     ], {
       ignore: [],

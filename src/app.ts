@@ -16,8 +16,8 @@ import {user, article} from './routes';
 const app = express();
 
 // views engine setup
-app.set('views', path.resolve(__dirname, 'views'));
-app.set('views engine', 'jade');
+// app.set('views', path.resolve(__dirname, 'views'));
+// app.set('views engine', 'jade');
 
 // uncomment after placing your favicon in /static
 app.use(logger('dev'));
@@ -25,6 +25,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, 'static')));
+app.use((req, res, next) => {
+  if (req.method === 'GEG') {
+    res.sendfile('index.html');
+  } else {
+    next();
+  }
+});
+
 app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());

@@ -33,8 +33,8 @@ router.post('/save', (req, res, next) => {
   }
 
   function saveArticle(article, res) {
-    const article = new Article(article);
-    article.save().then((doc) => {
+    const newArticle = new Article(article);
+    newArticle.save().then((doc) => {
       res.send({_id: doc._id});
     }).catch((err) => {
       throw err.message;
@@ -85,7 +85,7 @@ router.post('/delete', (req, res, next) => {
   if (req.isAuthenticated() && req.body.articleId) {
     Article.findOne({_id: req.body.articleId}, (err, doc) => {
       if (err) throw err.message;
-      if (req.user.username === doc.author) {
+      if (req.user.username === doc['author']) {
         Article.remove({_id: req.body.articleId}, (err) => {
           if (err) {
             res.send({'delete': err.message})
@@ -117,10 +117,12 @@ router.post('/getClassification', (req, res, next) => {
 });
 
 router.post('/getBreviary', (req, res, next) => {
-  const body = req.body;
-  getBreviaries(body['index'], body['author'], body['number']);
+  getBreviaries(req.body);
 
-  function getBreviaries(index: number = 1, author?: string, number?: number = 20) {
+  function getBreviaries(queryParams) {
+    let index = queryParams['index'] || 1;
+    let number = queryParams['number'] || 20;
+    let author = queryParams['author'] || null;
     if (!author) {
       queryBrev(index, number);
     } else {
