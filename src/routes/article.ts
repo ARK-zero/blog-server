@@ -5,8 +5,6 @@ import express = require('express');
 import {Article} from '../models';
 const router = express.Router();
 
-import * as _ from 'lodash'
-
 const jsdom = require('jsdom');
 const window = new jsdom.JSDOM().window;
 const $ = require('jquery')(window);
@@ -143,7 +141,7 @@ router.post('/getBreviary', (req, res, next) => {
           const src = $(item.content).find('img')[0].src;
           Object.assign(item, {src: src})
         }
-        item.content = $(item.content).text().substring(0, 120) + '...';
+        item.content = $(item.content).text().substring(0, 120).trim() + '...';
       }
       res.send(queries);
     })
@@ -170,21 +168,5 @@ router.post('/getBreviary', (req, res, next) => {
   }
 
 });
-
-
-router.post('/insert', (req, res, next) => {
-  for (let i = 0; i < 15; i++) {
-    let article = new Article({
-      title: Math.random().toString(),
-      author: 'aman',
-      classification: 'angular',
-      content: Math.random().toString()
-    });
-    article.save();
-  }
-
-  res.send('hello')
-});
-
 
 export {router as article};
