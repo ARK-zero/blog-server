@@ -5,7 +5,7 @@ export const databaseConfig = {
   auth: false,
   username: '',
   password: '',
-  database: 'test',
+  database: 'blog',
   port: 27017,
   host: 'localhost'
 };
