@@ -4,6 +4,7 @@
 import express = require('express');
 import passport = require('passport');
 import crypto = require('crypto');
+import {Validator} from './service/validator';
 
 import {User} from '../models';
 import {passwordConfig} from '../config';
@@ -30,8 +31,8 @@ router.post('/logout', (req, res, next) => {
 });
 
 router.post('/register', (req, res, next) => {
-  console.log(req.body.inviteCode);
-  if (req.body.username && req.body.password && (req.body.inviteCode === passwordConfig.inviteCode)) {
+  if (Validator.validateUsername(req.body.username) &&
+    Validator.validatePassword(req.body.password) && (req.body.inviteCode === passwordConfig.inviteCode)) {
     User.findOne({username: req.body.username}, (err, user) => {
       if (err) throw err.message;
       if (!user) {

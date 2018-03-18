@@ -44,6 +44,7 @@ router.post('/articleList', (req, res, next) => {
   if (req.body.author) {
     Article.aggregate([
       {$match: {author: req.body.author}},
+      {$sort: {title: 1}},
       {
         $group: {
           _id: '$classification',
