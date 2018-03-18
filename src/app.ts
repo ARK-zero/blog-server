@@ -25,17 +25,26 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, 'static')));
+app.use(session(sessionConfig));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+const options = {
+  root: __dirname + '/static/',
+  dotfiles: 'deny',
+  headers: {
+    'x-timestamp': Date.now(),
+    'x-sent': true
+  }
+};
 app.use((req, res, next) => {
-  if (req.method === 'GEG') {
-    res.sendfile('index.html');
+  if (req.method === 'GET') {
+    res.sendfile('index.html', options);
   } else {
     next();
   }
 });
-
-app.use(session(sessionConfig));
-app.use(passport.initialize());
-app.use(passport.session());
 
 // passport config
 passport.use(new LocalStrategy({
