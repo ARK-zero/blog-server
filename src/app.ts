@@ -7,6 +7,7 @@ import bodyParser = require('body-parser');
 import passport = require('passport');
 import LocalStrategy = require('passport-local');
 import session = require('express-session');
+import compression = require('compression');
 
 import {sessionConfig, passwordConfig} from './config';
 
@@ -20,6 +21,7 @@ const app = express();
 // app.set('views engine', 'jade');
 
 // uncomment after placing your favicon in /static
+app.use(compression());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
